@@ -16,21 +16,17 @@ app.listen(process.env.PORT, () => {
 })
 
 //to verify the callback
-app.get('/webhook', (req, res) => {
-    let mode = req.query["hub.mode"];
-    let challange = req.query["hub.challenge"];
-    let token = req.query["hub.verify_token"];
-
-    if (mode && token) {
-
-        if (mode === "subscribe" && token === myToken ) {
-            res.status(200).send(challange);
-        } else {
-            res.status(403);
-        }
-
+app.get('/webhook', function(req, res) {
+    if (
+      req.query['hub.mode'] == 'subscribe' &&
+      req.query['hub.verify_token'] == process.env.META_DEV_TOKEN
+    ) {
+      res.send(req.query['hub.challenge']);
+      console.log("Facebook verificou a URL");
+    } else {
+      res.sendStatus(400);
     }
-});
+  });
 
 app.post("/webhook", (req, res) => {
     let body_param = req.body;
