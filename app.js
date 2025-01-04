@@ -51,7 +51,7 @@ app.get("/webhook", (req, res) => {
         let messageFrom = req.body.entry[0].changes[0].value.messages[0].from;
         // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
         let ourNumberId = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-        // let status = req.body.entry[0].changes[0].statuses;
+        let status = req.body.entry[0].changes[0].statuses;
         let contactName = req.body.entry[0].changes[0].value.contacts[0].profile.name;
         let msgText = `Olá ${contactName}! Parece que não sou tão medíocre assim.`;
 
@@ -59,19 +59,22 @@ app.get("/webhook", (req, res) => {
         console.log(msgText);
         console.log('contact name', contactName);
 
-        await axios({
-                method: "POST",
-                url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${META_DEV_TOKEN}`,
-                },
-                data: {
-                  messaging_product: "whatsapp",
-                  to: messageFrom,
-                  text: { body: msgText },
-                },
-              });
+        if (!status) {
+            await axios({
+                    method: "POST",
+                    url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${META_DEV_TOKEN}`,
+                    },
+                    data: {
+                      messaging_product: "whatsapp",
+                      to: messageFrom,
+                      text: { body: msgText },
+                    },
+                  });
+        }
+
     }
   
     // check if the incoming message contains text
