@@ -39,6 +39,36 @@ app.get("/webhook", (req, res) => {
     // details on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
     const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
     console.log('Message: ', message)
+
+    if (
+        req.body.entry &&
+        req.body.entry[0].changes &&
+        req.body.entry[0].changes[0] &&
+        req.body.entry[0].changes[0].value.messages &&
+        req.body.entry[0].changes[0].value.messages[0]
+    ) {
+        // let messageType = req.body.entry[0].changes[0].value.messages[0].type;
+        let messageFrom = req.body.entry[0].changes[0].value.messages[0].from;
+        // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
+        let ourNumberId = req.body.entry[0].changes[0].value.metadata.phone_number_id;
+        // let status = req.body.entry[0].changes[0].statuses;
+        let contactName = req.body.entry[0].changes[0].value.contacts[0].profile.name;
+        let msgText = `Olá ${contactName}! Parece que não sou tão medíocre assim.`;
+
+        await axios({
+                method: "POST",
+                url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${META_DEV_TOKEN}`,
+                },
+                data: {
+                  messaging_product: "whatsapp",
+                  to: messageFrom,
+                  text: { body: msgText },
+                },
+              });
+    }
   
     // check if the incoming message contains text
     // if (message?.type === "text") {
@@ -47,21 +77,7 @@ app.get("/webhook", (req, res) => {
     //     req.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
   
     //   // send a reply message as per the docs here https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
-    //   await axios({
-    //     method: "POST",
-    //     url: `https://graph.facebook.com/v21.0/${business_phone_number_id}/messages`,
-    //     headers: {
-    //       Authorization: `Bearer ${META_DEV_TOKEN}`,
-    //     },
-    //     data: {
-    //       messaging_product: "whatsapp",
-    //       to: message.from,
-    //       text: { body: "Echo: " + message.text.body },
-    //       context: {
-    //         message_id: message.id, // shows the message as a reply to the original user message
-    //       },
-    //     },
-    //   });
+    //   
   
     //   // mark incoming message as read
     //   await axios({
