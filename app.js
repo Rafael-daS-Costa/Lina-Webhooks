@@ -28,7 +28,7 @@ app.get('/webhook', function(req, res) {
     }
   });
 
-app.post("/webhook", (req, res) => {
+app.post("/webhook", async (req, res) => {
     let body_param = req.body;
 
     console.log(JSON.stringify(body_param, null, 2))
@@ -47,7 +47,7 @@ app.post("/webhook", (req, res) => {
             console.log("from "+from);
             console.log("boady param "+msg_body);
 
-            axios({
+            await axios({
                 method: "POST",
                 url: "https://graph.facebook.com/v21.0/"+phon_no_id+"/messages",
                 data: {
