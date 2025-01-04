@@ -19,7 +19,7 @@ app.listen(process.env.PORT, () => {
 app.get('/webhook', function(req, res) {
     if (
       req.query['hub.mode'] == 'subscribe' &&
-      req.query['hub.verify_token'] == process.env.META_DEV_TOKEN
+      req.query['hub.verify_token'] == myToken
     ) {
       res.send(req.query['hub.challenge']);
       console.log("Facebook verificou a URL");
@@ -49,18 +49,24 @@ app.post("/webhook", (req, res) => {
 
             axios({
                 method: "POST",
-                url: "https://graph.facebook.com/v21.0/"+phon_no_id+"/messages?access_token="+token,
+                url: `https://graph.facebook.com/v21.0/${phon_no_id}/messages?access_token=${token}`,
                 data: {
-                    messaging_product: "whatsapp",
-                    to: from,
-                    text: {
-                        body: "Hello, TiaBette"
-                    }
+                  messaging_product: "whatsapp",
+                  to: from,
+                  text: {
+                    body: "Hello, TiaBette"
+                  }
                 },
                 headers: {
-                    "Content-Type":"application/json"
+                  "Content-Type": "application/json"
                 }
-            })
+              })
+              .then(response => {
+                console.log('Message sent successfully', response.data);
+              })
+              .catch(error => {
+                console.error('Error sending message', error);
+              });
 
             res.sendStatus(200);
         } else {
