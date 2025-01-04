@@ -15,8 +15,12 @@ app.listen(process.env.PORT,()=>{
     console.log("webhook is listening");
 });
 
-app.get('/favicon.ico', (req, res) => {
-    res.status(204).end();
+app.use((req, res, next) => {
+    if (req.url === '/favicon.ico') {
+        res.status(204).end(); // Ignora e retorna 204
+    } else {
+        next();
+    }
 });
 
 //to verify the callback url from dashboard side - cloud api side
