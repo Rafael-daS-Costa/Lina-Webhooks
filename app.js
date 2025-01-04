@@ -55,22 +55,23 @@ app.get("/webhook", (req, res) => {
         let contactName = req.body.entry[0].changes[0].value.contacts[0].profile.name;
         let msgText = `Olá ${contactName}! Parece que não sou tão medíocre assim.`;
 
+        
         console.log(msgText);
         console.log('contact name', contactName);
 
-        // await axios({
-        //         method: "POST",
-        //         url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${META_DEV_TOKEN}`,
-        //         },
-        //         data: {
-        //           messaging_product: "whatsapp",
-        //           to: messageFrom,
-        //           text: { body: msgText },
-        //         },
-        //       });
+        await axios({
+                method: "POST",
+                url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${META_DEV_TOKEN}`,
+                },
+                data: {
+                  messaging_product: "whatsapp",
+                  to: messageFrom,
+                  text: { body: msgText },
+                },
+              });
     }
   
     // check if the incoming message contains text
