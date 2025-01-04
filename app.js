@@ -46,6 +46,9 @@ app.post("/webhook", (req, res) => {
             let from = body_param.entry[0].changes[0].value.messages[0].from;
             let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
 
+            console.log("phone number "+phon_no_id);
+            console.log("from "+from);
+            console.log("boady param "+msg_body);
 
             axios({
                 method: "POST",
