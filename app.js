@@ -7,8 +7,10 @@ require('dotenv').config()
 
 app.use(bodyParser.json())
 
-const token = process.env.META_DEV_TOKEN;
-const myToken = process.env.MY_TOKEN
+// const token = process.env.META_DEV_TOKEN;
+// const myToken = process.env.MY_TOKEN
+
+const {META_DEV_TOKEN, MY_TOKEN} = process.env;
 
 
 app.listen(process.env.PORT, () => {
@@ -16,59 +18,67 @@ app.listen(process.env.PORT, () => {
 })
 
 //to verify the callback
-app.get('/webhook', function(req, res) {
-    if (
-      req.query['hub.mode'] == 'subscribe' &&
-      req.query['hub.verify_token'] == process.env.META_DEV_TOKEN
-    ) {
-      res.send(req.query['hub.challenge']);
-      console.log("Facebook verificou a URL");
+app.get("/webhook", (req, res) => {
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
+  
+    if (mode === "subscribe" && token === MY_TOKEN) {
+      res.status(200).send(challenge);
+      console.log("Webhook verified successfully!");
     } else {
-      res.sendStatus(400);
+      res.sendStatus(403);
     }
   });
 
-app.post("/webhook", async (req, res) => {
-    let body_param = req.body;
-
-    console.log(JSON.stringify(body_param, null, 2))
-
-    if (body_param.object) {
-        console.log('inside body_param')
-        if (body_param.entry &&
-            body_param.entry[0].changes[0].value.messages &&
-            body_param.entry[0].changes[0].value.messages[0]
-        ) {
-            let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
-            let from = body_param.entry[0].changes[0].value.messages[0].from;
-            let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
-
-            console.log("phone number "+phon_no_id);
-            console.log("from "+from);
-            console.log("boady param "+msg_body);
-
-            await axios({
-                method: "POST",
-                url: "https://graph.facebook.com/v21.0/"+phon_no_id+"/messages",
-                data: {
-                    messaging_product: "whatsapp",
-                    to: phon_no_id,
-                    text: {
-                        body: "Hello, TiaBette"
-                    }
-                },
-                headers: {
-                    "Content-Type":"application/json",
-                    "Authorization": `Bearer ${myToken}`,
-                }
-            })
-
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(404);
-        }
+  app.post("/webhook", async (req, res) => {
+    // log incoming messages
+    console.log("Incoming webhook message:", JSON.stringify(req.body, null, 2));
+  
+    // check if the webhook request contains a message
+    // details on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
+    const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
+  
+    // check if the incoming message contains text
+    if (message?.type === "text") {
+      // extract the business number to send the reply from it
+      const business_phone_number_id =
+        req.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
+  
+      // send a reply message as per the docs here https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
+      await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v18.0/${business_phone_number_id}/messages`,
+        headers: {
+          Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+        },
+        data: {
+          messaging_product: "whatsapp",
+          to: message.from,
+          text: { body: "Echo: " + message.text.body },
+          context: {
+            message_id: message.id, // shows the message as a reply to the original user message
+          },
+        },
+      });
+  
+      // mark incoming message as read
+      await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v21.0/${business_phone_number_id}/messages`,
+        headers: {
+          Authorization: `Bearer ${META_DEV_TOKEN}`,
+        },
+        data: {
+          messaging_product: "whatsapp",
+          status: "read",
+          message_id: message.id,
+        },
+      });
     }
-});
+  
+    res.sendStatus(200);
+  });
 
 app.get("/", (req, res) => {
     res.status(200).send("hello this is webhook setup")
