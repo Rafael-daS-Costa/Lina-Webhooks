@@ -1,11 +1,26 @@
 {
   "scripts": {
-    "start":"node app.js" 
+    "start": "node app.js"
   },
   "dependencies": {
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
-  }
+  },
+  "name": "tiabete_2.0",
+  "description": "",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rafael-daS-Costa/TiaBete_2.0.git"
+  },
+  "author": "Rafael Costa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rafael-daS-Costa/TiaBete_2.0/issues"
+  },
+  "homepage": "https://github.com/Rafael-daS-Costa/TiaBete_2.0#readme"
 }
