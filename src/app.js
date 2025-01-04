@@ -11,7 +11,7 @@ const token = process.env.META_DEV_TOKEN;
 const myToken = process.env.MY_TOKEN
 
 
-app.listen(3000 || process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Example webhook listening`)
 })
 
