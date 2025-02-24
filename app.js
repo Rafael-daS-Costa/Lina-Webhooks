@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 require('dotenv').config();
 
 
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 // const token = process.env.META_DEV_TOKEN;
 // const myToken = process.env.MY_TOKEN
@@ -108,4 +110,8 @@ app.post('/webhook', async (req, res) => {
 
 app.get('/', (req, res) => {
   res.status(200).send('hello this is webhook setup');
+});
+
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'src', 'public', 'privacy_policy.html'));
 });
