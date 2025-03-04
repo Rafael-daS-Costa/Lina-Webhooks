@@ -2,7 +2,10 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
-const axios = require('axios');
+const { 
+  sendPrimitiveAudioResponseMessage, 
+  sendPrimitiveTextResponseMessage } = 
+  require('./src/messageChoserService/messageChoserService');
 require('dotenv').config();
 
 
@@ -12,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 // const token = process.env.META_DEV_TOKEN;
 // const myToken = process.env.MY_TOKEN
 
-const { META_DEV_TOKEN, MY_TOKEN } = process.env;
+const { MY_TOKEN } = process.env;
 
 app.listen(process.env.PORT, () => {
   console.log('Example webhook listening');
@@ -50,32 +53,20 @@ app.post('/webhook', async (req, res) => {
         req.body.entry[0].changes[0].value.messages &&
         req.body.entry[0].changes[0].value.messages[0]
   ) {
-    // let messageType = req.body.entry[0].changes[0].value.messages[0].type;
+    const messageType = req.body.entry[0].changes[0].value.messages[0].type;
     const messageFrom = req.body.entry[0].changes[0].value.messages[0].from;
     // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
     const ourNumberId = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-    const status = req.body.entry[0].changes[0].statuses;
+    const status = req.body.entry[0].changes[0].statuses[0].status;
     const contactName = req.body.entry[0].changes[0].value.contacts[0].profile.name;
-    const msgText = `Olá ${contactName}! Parece que não sou tão medíocre assim.`;
-
-        
-    console.log(msgText);
-    console.log('contact name', contactName);
 
     if (!status) {
-      await axios({
-        method: 'POST',
-        url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${META_DEV_TOKEN}`,
-        },
-        data: {
-          messaging_product: 'whatsapp',
-          to: messageFrom,
-          text: { body: msgText },
-        },
-      });
+      if (messageType === 'audio') {
+        await sendPrimitiveAudioResponseMessage(ourNumberId, messageFrom, contactName);
+      }
+      if (messageType === 'text') {
+        await sendPrimitiveTextResponseMessage(ourNumberId, messageFrom, contactName);
+      }
     }
 
   }
