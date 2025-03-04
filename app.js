@@ -57,7 +57,7 @@ app.post('/webhook', async (req, res) => {
     const messageFrom = req.body.entry[0].changes[0].value.messages[0].from;
     // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
     const ourNumberId = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-    const status = req.body.entry[0].changes[0].statuses[0].status;
+    const status = req.body.entry[0].changes[0].statuses;
     const contactName = req.body.entry[0].changes[0].value.contacts[0].profile.name;
 
     if (!status) {
