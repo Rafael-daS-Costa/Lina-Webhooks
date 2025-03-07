@@ -1,6 +1,7 @@
 const { saveMedia } = require('../../utils/fileSaver');
 const { getAudioTranscription } = require('../deepgramService/deepgramService');
 const { getMediaUrl, downloadMedia } = require('../facebookService/facebookService');
+const path = require('path');
 
 async function getFileAndTranscribe(mediaId){
   try{
@@ -12,7 +13,7 @@ async function getFileAndTranscribe(mediaId){
     const mediaFile = await downloadMedia(mediaInfo.url);
 
     // salva o arquivo na pasta files (ela precisa já estar criada)
-    const filePath = `../../files/file-${mediaId}.ogg`;
+    const filePath = path.resolve(__dirname, `../../files/file-${mediaId}.ogg`);
     saveMedia(filePath, mediaFile);
 
     // transcrição do arquivo de áudio
