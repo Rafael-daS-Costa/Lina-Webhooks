@@ -20,7 +20,7 @@ async function getFileAndTranscribe(mediaId) {
     // faz download do arquivo do facebook
     const mediaFile = await downloadMedia(mediaInfo.url);
 
-    console.log('Tamanho do buffer antes de salvar:', mediaFile.length);
+    console.log('Buffer size before saving:', mediaFile.length);
 
     // define o caminho do arquivo, utilizando /tmp para evitar problemas no Render
     const filePath = path.resolve('/tmp', `file-${mediaId}.ogg`);
@@ -32,11 +32,11 @@ async function getFileAndTranscribe(mediaId) {
 
     // salva o arquivo
     await saveMedia(filePath, mediaFile);
-    console.log(`Arquivo salvo em: ${filePath}`);
+    console.log(`File saved in: ${filePath}`);
 
     // verifica se o arquivo foi realmente salvo
     if (!fs.existsSync(filePath)) {
-      throw new Error(`Erro: o arquivo não foi salvo corretamente em ${filePath}`);
+      throw new Error(`Error: file not correctly saved in ${filePath}`);
     }
 
     // transcrição do arquivo de áudio
@@ -45,7 +45,7 @@ async function getFileAndTranscribe(mediaId) {
     console.log('getFileAndTranscribe end');
     return transcription;
   } catch (e) {
-    throw new Error('Erro ao obter e transcrever arquivo: ' + e.message);
+    throw new Error('Error getting and transcribing audio: ' + e.message);
   }
 }
 

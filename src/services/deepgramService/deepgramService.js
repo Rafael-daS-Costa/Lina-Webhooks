@@ -10,34 +10,34 @@ const getAudioTranscription = async (filePath) => {
 
     // Verifica se o arquivo existe e não está vazio
     if (!fs.existsSync(filePath)) {
-      throw new Error(`Arquivo não encontrado: ${filePath}`);
+      throw new Error(`File not found: ${filePath}`);
     }
     
     const stats = fs.statSync(filePath);
     if (stats.size === 0) {
-      throw new Error(`Arquivo está vazio: ${filePath}`);
+      throw new Error(`Empty file: ${filePath}`);
     }
 
     // Faz a transcrição do áudio
     const response = await deepgram.listen.prerecorded.transcribeFile(
       fs.readFileSync(filePath),
       {
-        model: 'nova',
+        model: 'nova-2-general',
         language: 'pt-BR'
       }
     );
 
-    console.log('Resposta do Deepgram:', response);
+    console.log('Deepgram response:', response);
 
     // Verifica se a resposta da API é válida
     if (!response || !response.result || !response.result.results) {
-      throw new Error('Deepgram retornou uma resposta inválida.');
+      throw new Error('Deepgram returned invalid result');
     }
 
     console.log('getAudioTranscription ended successfully');
     return response.result.results.channels[0].alternatives[0].transcript;
   } catch (error) {
-    console.error('Erro ao transcrever áudio:', error);
+    console.error('Error on audio transcription:', error);
     return null; // Retorna null para evitar crash na aplicação
   }
 };
