@@ -1,13 +1,13 @@
 const fs = require('fs');
 
-function saveMedia(filePath, data){
-  try {
-    console.log('saveMedia start');
-    fs.writeFileSync(filePath, data);
-    console.log('saveMedia end');
-  } catch (error) {
-    throw error;
-  }
+async function saveMedia(filePath, data){
+  console.log('saveMedia start');
+  fs.writeFile(filePath, data, (error) => {
+    if(error){
+      throw new Error('Erro ao salvar arquivo: ', error);
+    }
+  });
+  console.log('saveMedia end');
 }
 
 module.exports ={ saveMedia };

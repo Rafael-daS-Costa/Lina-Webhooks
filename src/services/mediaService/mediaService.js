@@ -14,7 +14,7 @@ async function getFileAndTranscribe(mediaId){
 
     // salva o arquivo na pasta files (ela precisa já estar criada)
     const filePath = path.resolve(__dirname, `../../files/file-${mediaId}.ogg`);
-    saveMedia(filePath, mediaFile);
+    await saveMedia(filePath, mediaFile);
 
     // transcrição do arquivo de áudio
     const transcription = await getAudioTranscription(filePath);
