@@ -12,8 +12,8 @@ const sendPrimitiveAudioResponseMessage = async (
   fileId) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
   msgText = 
-    `Olá ${contactName}! 
-    Você mandou um áudio com este conteúdo: $${transcribedAudio}`;
+    `Olá ${contactName}!`+ 
+    `Você mandou um áudio com este conteúdo: ${transcribedAudio}`;
   console.log(msgText);
   console.log('contact name', contactName);
   await axios({
