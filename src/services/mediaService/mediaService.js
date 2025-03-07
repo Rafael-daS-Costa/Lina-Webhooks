@@ -22,6 +22,8 @@ async function getFileAndTranscribe(mediaId) {
 
     // define o caminho do arquivo, utilizando /tmp para evitar problemas no Render
     const filePath = path.resolve('/tmp', `file-${mediaId}.ogg`);
+
+    console.log('filePath: ', filePath);
     
     // garante que a pasta existe
     ensureDirectoryExistence(filePath);

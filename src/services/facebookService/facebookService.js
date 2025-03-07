@@ -14,7 +14,7 @@ async function getMediaUrl(idMedia){
         'Authorization': `Bearer ${META_DEV_TOKEN}`
       },
     });
-    console.log('getMediaUrl end');
+    console.log('getMediaUrl end with data: ', response.data);
     return response.data;
   } catch (error) {
     throw new Error('Erro ao receber informações da mídia: ', error);
@@ -32,7 +32,7 @@ async function downloadMedia(url){
       },
       responseType: 'arraybuffer'
     });
-    console.log('downloadMedia end');
+    console.log('downloadMedia end with data: ', response.data);
     return response.data;
   } catch (error) {
     throw new Error('Erro ao receber mídia: ', error);
