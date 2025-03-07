@@ -31,7 +31,7 @@ async function getFileAndTranscribe(mediaId) {
     ensureDirectoryExistence(filePath);
 
     // salva o arquivo
-    await saveMedia(filePath, mediaFile);
+    saveMedia(filePath, mediaFile);
     console.log(`File saved in: ${filePath}`);
 
     // verifica se o arquivo foi realmente salvo
