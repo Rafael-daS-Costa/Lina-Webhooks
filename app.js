@@ -65,7 +65,7 @@ app.post('/webhook', async (req, res) => {
       }
       if (messageType === 'text') {
         const messageContent =
-         request.body.entry[0].changes[0].value.messages[0].text.body;
+         req.body.entry[0].changes[0].value.messages[0].text.body;
         await sendPrimitiveTextResponseMessage(
           ourNumberId, 
           messageFrom, 
