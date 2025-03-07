@@ -20,6 +20,8 @@ async function getFileAndTranscribe(mediaId) {
     // faz download do arquivo do facebook
     const mediaFile = await downloadMedia(mediaInfo.url);
 
+    console.log('Tamanho do buffer antes de salvar:', mediaFile.length);
+
     // define o caminho do arquivo, utilizando /tmp para evitar problemas no Render
     const filePath = path.resolve('/tmp', `file-${mediaId}.ogg`);
 
