@@ -19,7 +19,6 @@ async function getFileAndTranscribe(mediaId){
     const transcription = await getAudioTranscription(filePath);
 
     console.log('getFileAndTranscribe end');
-    
     return transcription;
   } catch (e){
     throw new Error('Erro ao obter e transcrever arquivo: ', e);
