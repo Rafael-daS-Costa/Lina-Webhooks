@@ -9,5 +9,4 @@ function saveMedia(filePath, data) {
   }
 }
 
-
-module.exports ={ saveMedia };
+module.exports = { saveMedia };

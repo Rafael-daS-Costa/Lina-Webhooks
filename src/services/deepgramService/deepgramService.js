@@ -12,7 +12,7 @@ const getAudioTranscription = async (filePath) => {
     if (!fs.existsSync(filePath)) {
       throw new Error(`File not found: ${filePath}`);
     }
-    
+
     const stats = fs.statSync(filePath);
     if (stats.size === 0) {
       throw new Error(`Empty file: ${filePath}`);
@@ -23,8 +23,8 @@ const getAudioTranscription = async (filePath) => {
       fs.readFileSync(filePath),
       {
         model: 'nova-2-general',
-        language: 'pt-BR'
-      }
+        language: 'pt-BR',
+      },
     );
 
     console.log('Deepgram response:', response);
