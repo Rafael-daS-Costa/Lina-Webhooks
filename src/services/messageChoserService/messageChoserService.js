@@ -2,17 +2,17 @@ const axios = require('axios');
 const { getFileAndTranscribe } = require('../mediaService/mediaService');
 const { META_DEV_TOKEN } = process.env;
 
-
 let msgText;
 
 const sendPrimitiveAudioResponseMessage = async (
-  ourNumberId, 
-  messageFrom, 
+  ourNumberId,
+  messageFrom,
   contactName,
-  fileId) => {
+  fileId,
+) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
-  msgText = 
-    `Olá ${contactName}!\n`+ 
+  msgText =
+    `Olá ${contactName}!\n` +
     `Você mandou um áudio com este conteúdo: \n*${transcribedAudio}*`;
   console.log(msgText);
   console.log('contact name', contactName);
@@ -21,7 +21,7 @@ const sendPrimitiveAudioResponseMessage = async (
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${META_DEV_TOKEN}`,
+      Authorization: `Bearer ${META_DEV_TOKEN}`,
     },
     data: {
       messaging_product: 'whatsapp',
@@ -35,9 +35,11 @@ const sendPrimitiveTextResponseMessage = async (
   ourNumberId,
   messageFrom,
   contactName,
-  userMessage) => {
-  msgText = `Olá ${contactName}!\n`+
-  `Você mandou a seguinte mensagem de texto: \n*${userMessage}*`;
+  userMessage,
+) => {
+  msgText =
+    `Olá ${contactName}!\n` +
+    `Você mandou a seguinte mensagem de texto: \n*${userMessage}*`;
   console.log(msgText);
   console.log('contact name', contactName);
   await axios({
@@ -45,7 +47,7 @@ const sendPrimitiveTextResponseMessage = async (
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${META_DEV_TOKEN}`,
+      Authorization: `Bearer ${META_DEV_TOKEN}`,
     },
     data: {
       messaging_product: 'whatsapp',
@@ -55,4 +57,7 @@ const sendPrimitiveTextResponseMessage = async (
   });
 };
 
-module.exports = { sendPrimitiveAudioResponseMessage, sendPrimitiveTextResponseMessage };
+module.exports = {
+  sendPrimitiveAudioResponseMessage,
+  sendPrimitiveTextResponseMessage,
+};

@@ -1,6 +1,9 @@
 const { saveMedia } = require('../../utils/fileSaver');
 const { getAudioTranscription } = require('../deepgramService/deepgramService');
-const { getMediaUrl, downloadMedia } = require('../facebookService/facebookService');
+const {
+  getMediaUrl,
+  downloadMedia,
+} = require('../facebookService/facebookService');
 const path = require('path');
 const fs = require('fs');
 
@@ -26,7 +29,7 @@ async function getFileAndTranscribe(mediaId) {
     const filePath = path.resolve('/tmp', `file-${mediaId}.ogg`);
 
     console.log('filePath: ', filePath);
-    
+
     // garante que a pasta existe
     ensureDirectoryExistence(filePath);
 
