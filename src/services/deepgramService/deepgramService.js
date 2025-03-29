@@ -1,5 +1,7 @@
 const { createClient } = require('@deepgram/sdk');
 const fs = require('fs');
+require('dotenv').config();
+
 
 const { DEEPGRAM_TOKEN } = process.env;
 const deepgram = createClient(DEEPGRAM_TOKEN);

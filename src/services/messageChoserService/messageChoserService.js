@@ -1,21 +1,23 @@
 const axios = require('axios');
 const { getFileAndTranscribe } = require('../mediaService/mediaService');
+const { getWelcomeMessageTemplate } = require('../../templateMessages/templateMessages');
 const { META_DEV_TOKEN } = process.env;
+require('dotenv').config();
 
 let msgText;
 
 const sendPrimitiveAudioResponseMessage = async (
   ourNumberId,
-  messageFrom,
-  contactName,
+  userNumber,
+  userName,
   fileId,
 ) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
   msgText =
-    `Olá ${contactName}!\n` +
+    `Olá ${userName}!\n` +
     `Você mandou um áudio com este conteúdo: \n*${transcribedAudio}*`;
   console.log(msgText);
-  console.log('contact name', contactName);
+  console.log('contact name', userName);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
@@ -25,7 +27,7 @@ const sendPrimitiveAudioResponseMessage = async (
     },
     data: {
       messaging_product: 'whatsapp',
-      to: messageFrom,
+      to: userNumber,
       text: { body: msgText },
     },
   });
@@ -33,15 +35,15 @@ const sendPrimitiveAudioResponseMessage = async (
 
 const sendPrimitiveTextResponseMessage = async (
   ourNumberId,
-  messageFrom,
-  contactName,
+  userNumber,
+  userName,
   userMessage,
 ) => {
   msgText =
-    `Olá ${contactName}!\n` +
+    `Olá ${userName}!\n` +
     `Você mandou a seguinte mensagem de texto: \n*${userMessage}*`;
   console.log(msgText);
-  console.log('contact name', contactName);
+  console.log('contact name', userName);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
@@ -51,7 +53,30 @@ const sendPrimitiveTextResponseMessage = async (
     },
     data: {
       messaging_product: 'whatsapp',
-      to: messageFrom,
+      to: userNumber,
+      text: { body: msgText },
+    },
+  });
+};
+
+const sendWelcomeResponseMessage = async (
+  ourNumberId,
+  userNumber,
+  userName,
+) => {
+  msgText = getWelcomeMessageTemplate(userName);
+  console.log(msgText);
+  console.log('contact name', userName);
+  await axios({
+    method: 'POST',
+    url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${META_DEV_TOKEN}`,
+    },
+    data: {
+      messaging_product: 'whatsapp',
+      to: userNumber,
       text: { body: msgText },
     },
   });
@@ -60,4 +85,5 @@ const sendPrimitiveTextResponseMessage = async (
 module.exports = {
   sendPrimitiveAudioResponseMessage,
   sendPrimitiveTextResponseMessage,
+  sendWelcomeResponseMessage,
 };
