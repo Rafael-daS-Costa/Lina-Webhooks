@@ -18,6 +18,7 @@ const getTiabeteIaMessage = async (message) => {
     );
 
     console.log('Resposta:', response.data);
+    return response.data.response;
   } catch (error) {
     console.error('Erro na requisição:', error);
   }
