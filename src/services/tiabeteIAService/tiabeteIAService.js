@@ -1,3 +1,5 @@
+const { default: axios } = require('axios');
+
 require('dotenv').config();
 
 const { TIABETE_IA_API_KEY, TIABETE_IA_URL } = process.env;
