@@ -1,6 +1,9 @@
 const axios = require('axios');
 const { getFileAndTranscribe } = require('../mediaService/mediaService');
-const { getWelcomeMessageTemplate } = require('../../templateMessages/templateMessages');
+const {
+  getWelcomeMessageTemplate,
+} = require('../../templateMessages/templateMessages');
+const { getTiabeteIaMessage } = require('../tiabeteIAService/tiabeteIAService');
 const { META_DEV_TOKEN } = process.env;
 require('dotenv').config();
 
@@ -13,9 +16,7 @@ const sendPrimitiveAudioResponseMessage = async (
   fileId,
 ) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
-  msgText =
-    `Olá ${userName}!\n` +
-    `Você mandou um áudio com este conteúdo: \n*${transcribedAudio}*`;
+  const msgText = await getTiabeteIaMessage(transcribedAudio);
   console.log(msgText);
   console.log('contact name', userName);
   await axios({
@@ -39,9 +40,7 @@ const sendPrimitiveTextResponseMessage = async (
   userName,
   userMessage,
 ) => {
-  msgText =
-    `Olá ${userName}!\n` +
-    `Você mandou a seguinte mensagem de texto: \n*${userMessage}*`;
+  const msgText = await getTiabeteIaMessage(userMessage);
   console.log(msgText);
   console.log('contact name', userName);
   await axios({
