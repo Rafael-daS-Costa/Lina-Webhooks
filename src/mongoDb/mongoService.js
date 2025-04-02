@@ -1,7 +1,9 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const client = new MongoClient(process.env.MONGO_DB_CONNECTION_STRING);
+const { MONGO_DB_CONNECTION_STRING } = process.env;
+
+const client = new MongoClient(MONGO_DB_CONNECTION_STRING);
 
 const db = client.db('tiabette');
 const collectionUser = db.collection('user');
