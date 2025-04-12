@@ -104,8 +104,9 @@ app.post('/webhook', async (req, res) => {
             );
           }
         }
+      } else {
+        console.log('User not allowed', { userName, userNumber });
       }
-      console.log('User not allowed', { userName, userNumber });
     }
   }
 
