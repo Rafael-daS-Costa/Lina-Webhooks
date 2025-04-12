@@ -15,9 +15,10 @@ async function createUser(name, phoneNumber) {
 
   try {
     const result = await collectionUser.insertOne({ name, phoneNumber });
+    console.log('User created successfully: ', { userName, phoneNumber });
     return result.insertedId;
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Error creating user:', { error, userName, phoneNumber });
     throw new Error('Failed to create user');
   }
 }
@@ -30,9 +31,20 @@ async function findUserByPhoneNumber(phoneNumber) {
   try {
     return (await collectionUser.findOne({ phoneNumber })) || null;
   } catch (error) {
-    console.error('Error finding user by phone number:', error);
+    console.error('Error finding user by phone number:', { error });
     throw new Error('Failed to find user');
   }
 }
 
-module.exports = { findUserByPhoneNumber, createUser };
+async function getAllAllowedUsers() {
+  try {
+    const result = await db.collection('allowedUsers').find({}).toArray();
+
+    return result.length > 0 ? result : null;
+  } catch (error) {
+    console.log('getAllAllowedUsers error: ', { error });
+    throw error;
+  }
+}
+
+module.exports = { findUserByPhoneNumber, createUser, getAllAllowedUsers };

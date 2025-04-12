@@ -10,7 +10,11 @@ const {
 const {
   createUser,
   findUserByPhoneNumber,
+  getAllAllowedUsers,
 } = require('./src/mongoDb/mongoService');
+const {
+  getFileAndTranscribe,
+} = require('./src/services/mediaService/mediaService');
 require('dotenv').config();
 
 app.use(bodyParser.json());
@@ -38,10 +42,16 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', async (req, res) => {
   // log incoming messages
-  console.log('Incoming webhook message:', JSON.stringify(req.body, null, 2));
+  const status = req.body.entry[0].changes[0].statuses;
+  if (!status) {
+    console.log('Incoming webhook message:', JSON.stringify(req.body, null, 2));
+  }
 
   const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
-  console.log('Message: ', message);
+
+  if (message) {
+    console.log('Message: ', message);
+  }
 
   if (
     req.body.entry &&
@@ -55,69 +65,81 @@ app.post('/webhook', async (req, res) => {
     // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
     const ourNumberId =
       req.body.entry[0].changes[0].value.metadata.phone_number_id;
-    const status = req.body.entry[0].changes[0].statuses;
     const userName =
       req.body.entry[0].changes[0].value.contacts[0].profile.name;
 
     if (!status) {
-      const user = await findUserByPhoneNumber(userNumber);
+      const allowedUsers = await getAllAllowedUsers();
 
-      if (user === null) {
-        //manda mensagem de boas vindas e cria usuário no banco
-        await sendWelcomeResponseMessage(ourNumberId, userNumber, userName);
-        await createUser(userName, userNumber);
-      } else {
-        if (messageType === 'audio') {
-          const userAudioId =
-            req.body.entry[0].changes[0].value.messages[0].audio.id;
-          await sendPrimitiveAudioResponseMessage(
-            ourNumberId,
-            userNumber,
-            userName,
-            userAudioId,
-          );
-        }
-        if (messageType === 'text') {
-          const messageContent =
-            req.body.entry[0].changes[0].value.messages[0].text.body;
-          await sendPrimitiveTextResponseMessage(
-            ourNumberId,
-            userNumber,
-            userName,
-            messageContent,
-          );
+      const allowToMessage = allowedUsers.find(
+        (item) => item.phoneNumber === userNumber,
+      );
+
+      //se allowedUserss é null, então não tem restrições de usuários
+      //caso contrário, existem resitrições e devemos verificar allowToMessage
+      if (allowToMessage !== undefined || allowedUsers === null) {
+        console.log('User allowed: ', { userName, userNumber });
+        const user = await findUserByPhoneNumber(userNumber);
+
+        if (user === null) {
+          //manda mensagem de boas vindas e cria usuário no banco
+          await sendWelcomeResponseMessage(ourNumberId, userNumber, userName);
+          await createUser(userName, userNumber);
+        } else {
+          if (messageType === 'audio') {
+            const userAudioId =
+              req.body.entry[0].changes[0].value.messages[0].audio.id;
+            await sendPrimitiveAudioResponseMessage(
+              ourNumberId,
+              userNumber,
+              userName,
+              userAudioId,
+            );
+          }
+          if (messageType === 'text') {
+            const messageContent =
+              req.body.entry[0].changes[0].value.messages[0].text.body;
+            await sendPrimitiveTextResponseMessage(
+              ourNumberId,
+              userNumber,
+              userName,
+              messageContent,
+            );
+          }
         }
       }
+      console.log('User not allowed', { userNumber });
     }
   }
 
   res.sendStatus(200);
 });
 
-// app.post('/tiabette', async (req, res) => {
-//   // console.log('Incoming webhook message:', JSON.stringify(req.body, null, 2));
+app.get('/transcribe/:id', async (req, res) => {
+  const mediaId = req.params.id;
 
-//   const messageData = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
+  try {
+    const transcription = await getFileAndTranscribe(mediaId);
+    res.json({ success: true, transcription });
+  } catch (error) {
+    console.error('Error in /transcribe/:id:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-//   if (messageData && messageData.type === 'text') {
-//     const userMessage = messageData.text.body;
+// app.get('/allowed', async (_req, res) => {
+//   try {
+//     const response = await getAllAllowedUsers();
 
-//     try {
-//       // Enviar mensagem para o chatbot Python
-//       const chatbotResponse = await axios.post('http://localhost:5001/chat', {
-//         message: userMessage,
-//       });
-
-//       const botReply = chatbotResponse.data.response;
-
-//       // Enviar resposta do chatbot para o usuário no WhatsApp
-//       console.log(botReply);
-//     } catch (error) {
-//       console.error('Erro ao conectar com o chatbot:', error);
-//     }
+//     const allowToMessage = response.find(
+//       (item) => item.phoneNumber === numberOfIntruser,
+//     );
+//     console.log({ allowToMessage });
+//     res.sendStatus(200);
+//   } catch (error) {
+//     console.error('Error in /transcribe/:id:', error);
+//     res.status(500).json({ success: false, error: error.message });
 //   }
-
-//   res.sendStatus(200);
 // });
 
 app.get('/', (req, res) => {

@@ -1,4 +1,5 @@
 const axios = require('axios');
+require('dotenv').config();
 
 const { META_DEV_TOKEN } = process.env;
 
@@ -31,7 +32,7 @@ async function downloadMedia(url) {
       },
       responseType: 'arraybuffer',
     });
-    console.log('downloadMedia end with data: ', response.data);
+    console.log('downloadMedia end');
     return response.data;
   } catch (error) {
     throw new Error('Erro ao receber mídia: ', error);

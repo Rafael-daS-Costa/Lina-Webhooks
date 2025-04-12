@@ -64,8 +64,7 @@ const sendWelcomeResponseMessage = async (
   userName,
 ) => {
   msgText = getWelcomeMessageTemplate(userName);
-  console.log(msgText);
-  console.log('contact name', userName);
+  console.log(`Welcome message sent to ${userName} with number ${userNumber}`);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
