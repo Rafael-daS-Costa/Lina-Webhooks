@@ -1,4 +1,4 @@
-const { saveMedia } = require('../../utils/fileSaver');
+const { saveMedia, deleteMedia } = require('../../utils/fileSaver');
 const { getAudioTranscription } = require('../deepgramService/deepgramService');
 const {
   getMediaUrl,
@@ -23,19 +23,14 @@ async function getFileAndTranscribe(mediaId) {
     // faz download do arquivo do facebook
     const mediaFile = await downloadMedia(mediaInfo.url);
 
-    console.log('Buffer size before saving:', mediaFile.length);
-
     // define o caminho do arquivo, utilizando /tmp para evitar problemas no Render
     const filePath = path.resolve('/tmp', `file-${mediaId}.ogg`);
-
-    console.log('filePath: ', filePath);
 
     // garante que a pasta existe
     ensureDirectoryExistence(filePath);
 
     // salva o arquivo
     saveMedia(filePath, mediaFile);
-    console.log(`File saved in: ${filePath}`);
 
     // verifica se o arquivo foi realmente salvo
     if (!fs.existsSync(filePath)) {
@@ -45,7 +40,9 @@ async function getFileAndTranscribe(mediaId) {
     // transcrição do arquivo de áudio
     const transcription = await getAudioTranscription(filePath);
 
-    console.log('getFileAndTranscribe end');
+    deleteMedia(filePath);
+
+    console.log('getFileAndTranscribe end:', { transcription });
     return transcription;
   } catch (e) {
     throw new Error('Error getting and transcribing audio: ' + e.message);

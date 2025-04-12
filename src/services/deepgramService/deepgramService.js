@@ -2,7 +2,6 @@ const { createClient } = require('@deepgram/sdk');
 const fs = require('fs');
 require('dotenv').config();
 
-
 const { DEEPGRAM_TOKEN } = process.env;
 const deepgram = createClient(DEEPGRAM_TOKEN);
 
@@ -29,14 +28,15 @@ const getAudioTranscription = async (filePath) => {
       },
     );
 
-    console.log('Deepgram response:', response);
-
     // Verifica se a resposta da API é válida
     if (!response || !response.result || !response.result.results) {
       throw new Error('Deepgram returned invalid result');
     }
 
-    console.log('getAudioTranscription ended successfully');
+    console.log('getAudioTranscription ended successfully with data:', {
+      transcription:
+        response.result.results.channels[0].alternatives[0].transcript,
+    });
     return response.result.results.channels[0].alternatives[0].transcript;
   } catch (error) {
     console.error('Error on audio transcription:', error);
