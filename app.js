@@ -42,15 +42,11 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', async (req, res) => {
   // log incoming messages
-  const status = req.body.entry[0].changes[0].statuses;
-  if (!status) {
-    console.log('Incoming webhook message:', JSON.stringify(req.body, null, 2));
-  }
-
   const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
 
-  if (message) {
+  if (message !== undefined) {
     console.log('Message: ', message);
+    console.log('Incoming webhook message:', JSON.stringify(req.body, null, 2));
   }
 
   if (
@@ -62,6 +58,7 @@ app.post('/webhook', async (req, res) => {
   ) {
     const messageType = req.body.entry[0].changes[0].value.messages[0].type;
     const userNumber = req.body.entry[0].changes[0].value.messages[0].from;
+    const status = req.body.entry[0].changes[0].statuses;
     // let messageTimeStamp = req.body.entry[0].changes[0].value.messages[0].timestamp;
     const ourNumberId =
       req.body.entry[0].changes[0].value.metadata.phone_number_id;
@@ -108,7 +105,7 @@ app.post('/webhook', async (req, res) => {
           }
         }
       }
-      console.log('User not allowed', { userNumber });
+      console.log('User not allowed', { userName, userNumber });
     }
   }
 
