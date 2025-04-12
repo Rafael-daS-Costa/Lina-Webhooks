@@ -17,8 +17,6 @@ const sendPrimitiveAudioResponseMessage = async (
 ) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
   const msgText = await getTiabeteIaMessage(transcribedAudio);
-  console.log(msgText);
-  console.log('contact name', userName);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
@@ -41,8 +39,6 @@ const sendPrimitiveTextResponseMessage = async (
   userMessage,
 ) => {
   const msgText = await getTiabeteIaMessage(userMessage);
-  console.log(msgText);
-  console.log('contact name', userName);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
