@@ -4,12 +4,13 @@ require('dotenv').config();
 
 const { TIABETE_IA_API_KEY, TIABETE_IA_URL } = process.env;
 
-const getTiabeteIaMessage = async (message) => {
+const getTiabeteIaMessage = async (message, userId) => {
   try {
     const response = await axios.post(
       TIABETE_IA_URL,
       {
         message,
+        user_id: userId,
       },
       {
         headers: {
