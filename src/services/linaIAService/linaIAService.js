@@ -4,12 +4,13 @@ require('dotenv').config();
 
 const { LINA_IA_API_KEY, LINA_IA_URL } = process.env;
 
-const getLinaIaMessage = async (message) => {
+const getLinaIAMessage = async (message, userId) => {
   try {
     const response = await axios.post(
       LINA_IA_URL,
       {
         message,
+        user_id: userId,
       },
       {
         headers: {
@@ -19,11 +20,11 @@ const getLinaIaMessage = async (message) => {
       },
     );
 
-    console.log('LINA response:', { response: response.data });
+    console.log('Lina response:', { response: response.data });
     return response.data.response;
   } catch (error) {
     console.error('Erro na requisição:', error);
   }
 };
 
-module.exports = { getLinaIaMessage };
+module.exports = { getLinaIAMessage };

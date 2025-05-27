@@ -3,7 +3,7 @@ const { getFileAndTranscribe } = require('../mediaService/mediaService');
 const {
   getWelcomeMessageTemplate,
 } = require('../../templateMessages/templateMessages');
-const { getLinaIaMessage } = require('../linaIAService/linaIAService');
+const { getLinaIAMessage } = require('../linaIAService/linaIAService');
 const { META_DEV_TOKEN } = process.env;
 require('dotenv').config();
 
@@ -12,10 +12,11 @@ let msgText;
 const sendPrimitiveAudioResponseMessage = async (
   ourNumberId,
   userNumber,
+  userName,
   fileId,
 ) => {
   const transcribedAudio = await getFileAndTranscribe(fileId);
-  const msgText = await getLinaIaMessage(transcribedAudio, userNumber);
+  const msgText = await getLinaIAMessage(transcribedAudio, userNumber);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
@@ -34,9 +35,10 @@ const sendPrimitiveAudioResponseMessage = async (
 const sendPrimitiveTextResponseMessage = async (
   ourNumberId,
   userNumber,
+  userName,
   userMessage,
 ) => {
-  const msgText = await getLinaIaMessage(userMessage, userNumber);
+  const msgText = await getLinaIAMessage(userMessage, userNumber);
   await axios({
     method: 'POST',
     url: `https://graph.facebook.com/v21.0/${ourNumberId}/messages`,
