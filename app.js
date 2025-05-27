@@ -89,6 +89,7 @@ app.post('/webhook', async (req, res) => {
             await sendPrimitiveAudioResponseMessage(
               ourNumberId,
               userNumber,
+              userName,
               userAudioId,
             );
           }
@@ -98,6 +99,7 @@ app.post('/webhook', async (req, res) => {
             await sendPrimitiveTextResponseMessage(
               ourNumberId,
               userNumber,
+              userName,
               messageContent,
             );
           }
