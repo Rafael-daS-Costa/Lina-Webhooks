@@ -15,9 +15,13 @@ const getLinaIAMessage = async (message, userId) => {
       {
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'PostmanRuntime/7.36.0',
           'X-API-KEY': LINA_IA_API_KEY,
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
         },
-        timeout: 100000,
+        timeout: 300000,
       },
     );
 
@@ -28,5 +32,6 @@ const getLinaIAMessage = async (message, userId) => {
     throw error;
   }
 };
+
 
 module.exports = { getLinaIAMessage };
