@@ -17,6 +17,7 @@ const getLinaIAMessage = async (message, userId) => {
           'Content-Type': 'application/json',
           'X-API-KEY': LINA_IA_API_KEY,
         },
+        timeout: 100000,
       },
     );
 
@@ -24,6 +25,7 @@ const getLinaIAMessage = async (message, userId) => {
     return response.data.response;
   } catch (error) {
     console.error('Erro na requisição:', error);
+    throw error;
   }
 };
 
