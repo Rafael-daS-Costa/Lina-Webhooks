@@ -20,6 +20,7 @@ const getLinaIAMessage = async (message, userId, maxRetries = 3, delayMs = 12000
             'Content-Type': 'application/json',
             'X-API-KEY': LINA_IA_API_KEY,
           },
+          timeout: 50000,
         }
       );
 
