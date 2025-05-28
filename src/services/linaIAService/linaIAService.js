@@ -1,31 +1,40 @@
+const { default: axios } = require('axios');
+
 require('dotenv').config();
 
 const { LINA_IA_API_KEY, LINA_IA_URL } = process.env;
 
-const getLinaIAMessage = async (message, userId) => {
-  try {
-    const response = await fetch(LINA_IA_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': LINA_IA_API_KEY,
-      },
-      body: JSON.stringify({
-        message,
-        user_id: userId,
-      }),
-    });
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-    if (!response.ok) {
-      throw new Error(`Erro ${response.status}: ${response.statusText}`);
+const getLinaIAMessage = async (message, userId, maxRetries = 3, delayMs = 120000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await axios.post(
+        LINA_IA_URL,
+        {
+          message,
+          user_id: userId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-KEY': LINA_IA_API_KEY,
+          },
+        }
+      );
+
+      console.log('Lina response:', { response: response.data });
+      return response.data.response;
+    } catch (error) {
+      console.error(`Tentativa ${attempt} falhou:`, error.message);
+
+      if (attempt === maxRetries) {
+        console.error('Máximo de tentativas atingido. Abortando.');
+        throw error;
+      }
+
+      await delay(delayMs);
     }
-
-    const data = await response.json();
-    console.log('Lina response:', { response: data });
-    return data.response;
-  } catch (error) {
-    console.error('Erro na requisição:', error);
-    throw error;
   }
 };
 
